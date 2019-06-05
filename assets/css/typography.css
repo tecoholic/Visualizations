@@ -1,0 +1,31 @@
+.h1 {
+  @apply text-lg my-5 uppercase font-hairline tracking-wider;
+}
+
+.subtitle {
+  @apply text-lg my-2 text-gray-600;
+}
+
+@screen sm {
+  .h1 {
+    @apply text-xl;
+  }
+}
+
+@screen md {
+  .h1 {
+    @apply text-2xl;
+  }
+}
+
+@screen lg {
+  .h1 {
+    @apply text-3xl;
+  }
+}
+
+@screen xl {
+  .h1 {
+    @apply text-4xl;
+  }
+}
