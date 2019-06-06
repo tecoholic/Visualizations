@@ -7,7 +7,7 @@ export default {
    ** Headers of the page
    */
   head: {
-    title: pkg.name,
+    title: "Tecoholic's Visualizations",
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -24,12 +24,15 @@ export default {
   /*
    ** Global CSS
    */
-  css: ['~/assets/css/tailwind.css'],
+  css: [
+    '~/assets/css/tailwind.css',
+    '@fortawesome/fontawesome-svg-core/styles.css'
+  ],
 
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [],
+  plugins: ['~/plugins/fontawesome.js'],
 
   /*
    ** Nuxt.js modules

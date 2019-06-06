@@ -1,9 +1,13 @@
 .h1 {
-  @apply text-lg my-5 uppercase font-hairline tracking-wider;
+  @apply text-lg my-3 uppercase font-thin tracking-wider;
 }
 
 .subtitle {
-  @apply text-lg my-2 text-gray-600;
+  @apply text-lg my-2 text-gray-700;
+}
+
+a {
+  @apply text-purple-700 !important;
 }
 
 @screen sm {
