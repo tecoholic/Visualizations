@@ -4,6 +4,12 @@
     <div class="py-3">
       <h2 class="text-lg my-2 font-bold">
         Wealth Inequality Across Castes In India
+        <span
+          class="text-xs py-1 px-2 border border-blue-800 rounded bg-blue-700 text-white float-right shadow cursor-pointer"
+          @click="drawStackedChart()"
+        >
+          Stacked
+        </span>
       </h2>
       <p>
         This Visualization shows the distribution of communities across the
@@ -117,9 +123,109 @@ export default {
         .call(xAxis)
         .attr('font-size', 12)
         .attr('font-weight', 'bold')
+    },
+    drawStackedChart: function() {
+      this.svg.selectAll('*').remove()
+
+      const stack = d3
+        .stack()
+        .keys(this.csv.columns.slice(1))
+        .order(d3.stackOrderNone)
+        .offset(d3.stackOffsetNone)
+      const series = stack(this.csv)
+      this.$log.info(series)
+
+      const x = d3
+        .scaleBand()
+        .domain(this.csv.map(d => d.Category))
+        .range([10, this.width - 100])
+        .padding(0.3)
+
+      const y = d3
+        .scaleLinear()
+        .domain([0, 100.1])
+        .range([this.height - 50, 10])
+
+      const color = d3
+        .scaleOrdinal()
+        .domain(series.map(d => d.key))
+        .range(
+          d3.quantize(t => d3.interpolateSpectral(t * 0.8 + 0.1), series.length)
+        )
+        .unknown('#ccc')
+
+      const xAxis = g =>
+        g
+          .attr('transform', `translate(0, ${this.height - 50})`)
+          .call(
+            d3
+              .axisBottom(x)
+              .tickSize(0)
+              .tickPadding(5)
+          )
+          .call(g => g.selectAll('.domain').remove())
+          .attr('font-size', 12)
+
+      const yAxis = g =>
+        g
+          .attr('transform', `translate(20,0)`)
+          .call(
+            d3
+              .axisLeft(y)
+              .tickSize(0)
+              .tickSizeInner(-this.width + 100)
+          )
+          .call(g => g.selectAll('.domain').remove())
+          .attr('font-size', 12)
+
+      const legend = svg => {
+        const g = svg
+          .attr('font-family', 'sans-serif')
+          .attr('font-weight', 'bold')
+          .attr('font-size', 12)
+          .attr('text-anchor', 'end')
+          .attr('transform', `translate(${this.width}, 30)`)
+          .selectAll('g')
+          .data(series.slice().reverse())
+          .join('g')
+          .attr('transform', (d, i) => `translate(0,${i * 25})`)
+
+        g.append('rect')
+          .attr('x', -20)
+          .attr('width', 20)
+          .attr('height', 20)
+          .attr('fill', d => color(d.key))
+
+        g.append('text')
+          .attr('x', -24)
+          .attr('y', 9.5)
+          .attr('dy', '0.5em')
+          .text(d => d.key)
+      }
+
+      this.svg.append('g').call(xAxis)
+      this.svg.append('g').call(yAxis)
+      this.svg.append('g').call(legend)
+      this.svg
+        .append('g')
+        .selectAll('g')
+        .data(series)
+        .join('g')
+        .attr('fill', d => color(d.key))
+        .selectAll('rect')
+        .data(d => d)
+        .join('rect')
+        .attr('x', (d, i) => x(d.data.Category))
+        .attr('y', d => y(d[1]))
+        .attr('height', d => y(d[0]) - y(d[1]))
+        .attr('width', x.bandwidth())
     }
   }
 }
 </script>
 
-<style scoped></style>
+<style>
+.tick line {
+  stroke: #ccc;
+}
+</style>
