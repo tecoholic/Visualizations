@@ -57,8 +57,7 @@ export default {
   },
   methods: {
     async renderViz() {
-      const data = await this.$axios.$get('/data/wealthindex-NFHS-2005.csv')
-      this.csv = d3.csvParse(data)
+      this.csv = await d3.csv('/data/wealthindex-NFHS-2005.csv')
       this.drawCircles()
     },
     changeChartType: function() {
@@ -147,7 +146,6 @@ export default {
         .order(d3.stackOrderNone)
         .offset(d3.stackOffsetNone)
       const series = stack(this.csv)
-      this.$log.info(series)
 
       const x = d3
         .scaleBand()
