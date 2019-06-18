@@ -3,7 +3,7 @@
     <top-nav></top-nav>
     <div class="py-3">
       <h2 class="text-lg my-2 font-bold">
-        Wealth Inequality Across Castes In India
+        Wealth Inequality Across Caste Groups In India
         <span
           class="text-xs py-1 px-2 border border-purple-800 rounded bg-purple-700 text-white float-right shadow cursor-pointer"
           @click="changeChartType()"
@@ -54,6 +54,29 @@ export default {
   mounted() {
     this.svg = d3.select(this.$refs.viz)
     this.renderViz()
+  },
+  head() {
+    return {
+      title: 'Wealth Inequality Across Caste Groups In India',
+      meta: [
+        {
+          hid: 'title',
+          name: 'title',
+          content: 'Wealth Inequality Across Caste Groups In India'
+        },
+        {
+          hid: 'description',
+          name: 'description',
+          content:
+            'Visualization of the Wealth Inequality using the data from World Inequality Database study by Nitin Kumar Bharati'
+        },
+        {
+          hid: 'twitter_card',
+          name: 'twitter:card',
+          content: 'summary'
+        }
+      ]
+    }
   },
   methods: {
     async renderViz() {

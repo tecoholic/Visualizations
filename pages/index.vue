@@ -70,6 +70,23 @@ export default {
         }
       ]
     }
+  },
+  head() {
+    return {
+      title: "Tecoholic's Visualizations",
+      meta: [
+        {
+          hid: 'title',
+          name: 'title',
+          content: "Tecoholic's Visualizations"
+        },
+        {
+          hid: 'description',
+          name: 'description',
+          content: 'Data visualizations created by @tecoholic to try and tell stories via numbers'
+        }
+      ]
+    }
   }
 }
 </script>
