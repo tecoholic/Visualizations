@@ -5,28 +5,30 @@
       <h2 class="text-lg my-2 font-bold">
         Wealth Inequality Across Castes In India
         <span
-          class="text-xs py-1 px-2 border border-blue-800 rounded bg-blue-700 text-white float-right shadow cursor-pointer"
-          @click="drawStackedChart()"
+          class="text-xs py-1 px-2 border border-purple-800 rounded bg-purple-700 text-white float-right shadow cursor-pointer"
+          @click="changeChartType()"
         >
-          Stacked
+          Switch to {{ chartType }}
         </span>
       </h2>
       <p>
         This Visualization shows the distribution of communities across the
         wealth spectrum.
       </p>
+    </div>
+    <div id="dia" class="mt-8">
+      <svg ref="viz" :width="width" :height="height"></svg>
+    </div>
+    <div class="py-3">
       <p>
         <strong>Data Source: </strong>
         <a
           href="https://wid.world/document/n-k-bharti-wealth-inequality-class-and-caste-in-india-1961-2012/"
         >
           World Inequality Database - Wealth Inequality, Class and Caste in
-          India, 1961-201 by <em>Nitin Kumar Bharti</em>
+          India, 1961-2012 by <em>Nitin Kumar Bharti</em>
         </a>
       </p>
-    </div>
-    <div id="dia" class="mt-8">
-      <svg ref="viz" :width="width" :height="height"></svg>
     </div>
   </section>
 </template>
@@ -45,7 +47,8 @@ export default {
       csv: [],
       svg: null,
       width: 840,
-      height: 500
+      height: 500,
+      chartType: 'Stacked Barchart'
     }
   },
   mounted() {
@@ -58,12 +61,22 @@ export default {
       this.csv = d3.csvParse(data)
       this.drawCircles()
     },
+    changeChartType: function() {
+      if (this.chartType === 'Stacked Barchart') {
+        this.drawStackedChart()
+      } else {
+        this.drawCircles()
+      }
+    },
     unwrapColumns: function(d) {
       return this.csv.columns
         .slice(1)
         .map(col => ({ value: d[col], community: d.Category, wealth: col }))
     },
     drawCircles() {
+      this.chartType = 'Stacked Barchart'
+      this.svg.selectAll('*').remove()
+
       const xScale = d3
         .scalePoint()
         .domain(this.csv.map(row => row.Category))
@@ -125,6 +138,7 @@ export default {
         .attr('font-weight', 'bold')
     },
     drawStackedChart: function() {
+      this.chartType = 'Bubble Chart'
       this.svg.selectAll('*').remove()
 
       const stack = d3
