@@ -25,3 +25,10 @@
 .card .list-item:hover {
   @apply bg-gray-100;
 }
+
+.pill {
+  @apply rounded-full py-1 px-2 text-xs;
+}
+.pill-primary {
+  @apply bg-purple-700 text-gray-100;
+}

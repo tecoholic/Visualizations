@@ -39,7 +39,8 @@ export default {
    */
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    ['nuxt-log', {}]
   ],
   /*
    ** Axios module configuration

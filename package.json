@@ -39,6 +39,7 @@
     "eslint-plugin-standard": ">=4.0.0",
     "eslint-plugin-vue": "^5.2.2",
     "nodemon": "^1.18.9",
+    "nuxt-log": "^0.1.0",
     "prettier": "^1.16.4",
     "tailwindcss": "^1.0.3"
   }
