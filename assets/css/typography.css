@@ -1,5 +1,5 @@
 .h1 {
-  @apply text-lg my-3 uppercase font-thin tracking-wider;
+  @apply text-lg my-3 uppercase font-normal tracking-wider;
 }
 
 .subtitle {

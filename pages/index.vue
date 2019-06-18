@@ -63,7 +63,7 @@ export default {
           icon: 'hand-holding-usd',
           pages: [
             {
-              title: 'Wealth Index',
+              title: 'Wealth Inequality & Caste',
               link: '/socio-economic/wealth-index/'
             }
           ]

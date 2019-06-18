@@ -1,4 +1,6 @@
-# visualizations
+# Visualizations
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/765389cd-3757-4135-b031-724832dfb9a7/deploy-status)](https://app.netlify.com/sites/tecoholic-dataviz/deploys)
 
 > Visualizations created for fun
 
