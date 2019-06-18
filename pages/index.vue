@@ -83,7 +83,8 @@ export default {
         {
           hid: 'description',
           name: 'description',
-          content: 'Data visualizations created by @tecoholic to try and tell stories via numbers'
+          content:
+            'Data visualizations created by @tecoholic to try and tell stories via numbers'
         }
       ]
     }
