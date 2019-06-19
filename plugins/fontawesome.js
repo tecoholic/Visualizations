@@ -2,6 +2,7 @@ import Vue from 'vue'
 import { library, config } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
+  faInfoCircle,
   faBlog,
   faHandHoldingUsd,
   faChalkboardTeacher,
@@ -17,6 +18,7 @@ config.autoAddCss = false
 // You can add your icons directly in this plugin. See other examples for how you
 // can add other styles or just individual icons.
 library.add(
+  faInfoCircle,
   faChalkboardTeacher,
   faChevronRight,
   faHome,

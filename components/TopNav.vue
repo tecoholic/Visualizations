@@ -8,7 +8,9 @@
       <a href="https://twitter.com/tecoholic" class="px-4">
         <font-awesome-icon :icon="['fab', 'twitter']" /> Twitter
       </a>
-      <div class="inline font-light tracking-wider mr-4 float-right">
+      <div
+        class="inline font-light tracking-wider mr-4 float-right invisible md:visible"
+      >
         Tecoholic's Visualizations
       </div>
     </div>

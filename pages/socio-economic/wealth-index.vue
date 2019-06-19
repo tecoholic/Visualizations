@@ -1,23 +1,35 @@
 <template>
-  <section class="container">
+  <section class="container px-3 md:px-0">
     <top-nav></top-nav>
     <div class="py-3">
       <h2 class="text-lg my-2 font-bold">
         Wealth Inequality Across Caste Groups In India
+      </h2>
+      <p>
+        This Visualization shows the distribution of communities across the
+        wealth spectrum.
+      </p>
+      <p class="text-right mt-3">
         <span
           class="text-xs py-1 px-2 border border-purple-800 rounded bg-purple-700 text-white float-right shadow cursor-pointer"
           @click="changeChartType()"
         >
           Switch to {{ chartType }}
         </span>
-      </h2>
-      <p>
-        This Visualization shows the distribution of communities across the
-        wealth spectrum.
       </p>
     </div>
-    <div id="dia" class="mt-8">
-      <svg ref="viz" :width="width" :height="height"></svg>
+    <div id="dia" class="mt-8" style="max-width: 840px;">
+      <p
+        class="bg-blue-200 border-blue-400 border rounded-sm text-blue-900 md:invisible text-xs p-1 mb-3"
+      >
+        <font-awesome-icon icon="info-circle" />
+        Zoom in to the visualization if text is too small
+      </p>
+      <svg
+        ref="viz"
+        :viewBox="viewBox"
+        preserveAspectRatio="xMinYMin meet"
+      ></svg>
     </div>
     <div class="py-3">
       <p>
@@ -51,6 +63,11 @@ export default {
       chartType: 'Stacked Barchart'
     }
   },
+  computed: {
+    viewBox: function() {
+      return `0 0 ${this.width} ${this.height}`
+    }
+  },
   mounted() {
     this.svg = d3.select(this.$refs.viz)
     this.renderViz()
@@ -60,8 +77,8 @@ export default {
       title: 'Wealth Inequality Across Caste Groups In India',
       meta: [
         {
-          hid: 'title',
-          name: 'title',
+          hid: 'og_title',
+          name: 'og:title',
           content: 'Wealth Inequality Across Caste Groups In India'
         },
         {

@@ -1,15 +1,19 @@
 <template>
   <section class="container">
     <div class="pt-16 pb-8">
-      <h1 class="h1">
+      <h1 class="h1 px-3 md:mx-0">
         Tecoholic's Visualizations
       </h1>
-      <h2 class="subtitle">
+      <h2 class="subtitle px-3 md:mx-0">
         Telling stories with numbers
       </h2>
     </div>
-    <div class="flex">
-      <div v-for="group in links" :key="group.category" class="flex-1">
+    <div class="flex flex-col md:flex-row">
+      <div
+        v-for="group in links"
+        :key="group.category"
+        class="flex-1 mt-3 md:mt-0 px-3 md:px-0"
+      >
         <div class="card">
           <div class="card-header">
             <h3 class="card-title">
