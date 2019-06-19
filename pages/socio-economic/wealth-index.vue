@@ -1,36 +1,63 @@
 <template>
   <section class="container px-3 md:px-0">
     <top-nav></top-nav>
-    <div class="py-3">
-      <h2 class="text-lg my-2 font-bold">
-        Wealth Inequality Across Caste Groups In India
-      </h2>
-      <p>
-        This Visualization shows the distribution of communities across the
-        wealth spectrum.
-      </p>
-      <p class="text-right mt-3">
-        <span
-          class="text-xs py-1 px-2 border border-purple-800 rounded bg-purple-700 text-white float-right shadow cursor-pointer"
+    <h2 class="text-lg my-2 font-bold w-full md:w-3/4">
+      Wealth Inequality Across Caste Groups In India
+    </h2>
+    <p class="my-2">
+      This Visualization shows the distribution of communities across the wealth
+      spectrum.
+    </p>
+    <p
+      class="bg-blue-200 border-blue-400 border rounded-sm text-blue-900 md:hidden text-xs p-1 mb-3"
+    >
+      <font-awesome-icon icon="info-circle" />
+      Zoom in to the visualization if text is too small
+    </p>
+    <div class="flex my-3">
+      <div class="w-full">
+        <button
+          class="text-xs py-1 px-2 border border-green-700 rounded bg-green-600 text-white shadow cursor-pointer"
           @click="changeChartType()"
         >
           Switch to {{ chartType }}
-        </span>
-      </p>
+        </button>
+      </div>
     </div>
-    <div id="dia" class="mt-8" style="max-width: 840px;">
-      <p
-        class="bg-blue-200 border-blue-400 border rounded-sm text-blue-900 md:invisible text-xs p-1 mb-3"
-      >
-        <font-awesome-icon icon="info-circle" />
-        Zoom in to the visualization if text is too small
-      </p>
-      <svg
-        ref="viz"
-        :viewBox="viewBox"
-        preserveAspectRatio="xMinYMin meet"
-      ></svg>
+    <div class="flex flex-wrap">
+      <div id="dia" class="w-full md:w-2/3 p-4 rounded shadow">
+        <svg
+          ref="viz"
+          :viewBox="viewBox"
+          preserveAspectRatio="xMinYMin meet"
+          class="bg-white"
+        ></svg>
+      </div>
+      <div class="w-full md:w-1/3">
+        <table class="text-sm border mx-auto">
+          <tr v-if="csv.columns" class="border-b-2">
+            <th v-for="col in csv.columns" :key="col" class="px-1 py-2">
+              {{ col }}
+            </th>
+          </tr>
+          <tr
+            v-for="(row, index) in csv"
+            :key="index"
+            class="border-b hover:bg-purple-200"
+            :class="{ 'bg-purple-100': index % 2 === 1 }"
+          >
+            <td
+              v-for="col in csv.columns"
+              :key="'r' + index + col"
+              class="px-1 py-2 text-center"
+            >
+              {{ row[col] }}
+            </td>
+          </tr>
+        </table>
+      </div>
     </div>
+
     <div class="py-3">
       <p>
         <strong>Data Source: </strong>
