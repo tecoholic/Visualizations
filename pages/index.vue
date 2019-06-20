@@ -71,6 +71,16 @@ export default {
               link: '/socio-economic/wealth-index/'
             }
           ]
+        },
+        {
+          category: 'Health',
+          icon: 'heartbeat',
+          pages: [
+            {
+              title: 'AES & JS Cases and Deaths',
+              link: '/health/aes-js-deaths/'
+            }
+          ]
         }
       ]
     }
