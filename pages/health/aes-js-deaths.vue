@@ -104,10 +104,13 @@
       <p>
         <strong>Data Source: </strong>
         <a
-          href="https://wid.world/document/n-k-bharti-wealth-inequality-class-and-caste-in-india-1961-2012/"
+          href="https://www.nvbdcp.gov.in/WriteReadData/l892s/69175758181557490094.pdf"
         >
-          source
+          State wise number of AES/JE Cases and Deaths from 2013-2019(till
+          April)
         </a>
+        by Directorate of National Vector Borne Disease Control Programme -
+        Delhi
       </p>
     </div>
   </section>
