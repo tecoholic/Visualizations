@@ -25,7 +25,7 @@
           <div class="inline relative w-64">
             <select
               id="year"
-              v-model="year"
+              v-model.number="year"
               name="year"
               class="w-32 appearance-none bg-gray-200 border border-gray-200 text-gray-700 py-1 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
               @change="redraw()"
@@ -133,11 +133,13 @@ export default {
       height: 500,
       innerRadius: 30,
       outerRadius: 245,
-      outCol: '18-aes-cases',
-      inCol: '18-aes-death',
+      xCol: '13-aes-cases',
+      yCol: '13-aes-death',
       rows: [],
       year: 13,
-      disease: 'aes'
+      disease: 'aes',
+      xScale: null,
+      yScale: null
     }
   },
   computed: {
@@ -175,89 +177,218 @@ export default {
     async renderViz() {
       this.csv = await d3.csv('/data/aes-je-2013-18.csv')
       this.draw()
+      setTimeout(this.animate, 1000)
+    },
+    animate() {
+      if (this.year < 18) {
+        this.year += 1
+        this.updateGraph()
+        setTimeout(this.animate, 3000)
+      }
+    },
+    updateGraph() {
+      this.yCol = `${this.year}-${this.disease}-death`
+      this.xCol = `${this.year}-${this.disease}-cases`
+      this.svg
+        .selectAll('.state')
+        .transition()
+        .duration(3000)
+        .attr('cx', d => this.xScale(+d[this.xCol]))
+        .attr('cy', d => this.yScale(+d[this.yCol]))
+
+      this.svg
+        .selectAll('.state-label')
+        .transition()
+        .duration(3000)
+        .attr('x', d => this.xScale(+d[this.xCol]) + 5)
+        .attr('y', d => this.yScale(+d[this.yCol]) + 5)
+
+      this.drawTrails(this.year)
     },
     redraw() {
-      this.inCol = `${this.year}-${this.disease}-death`
-      this.outCol = `${this.year}-${this.disease}-cases`
-      this.svg.selectAll('*').remove()
-      this.draw()
+      this.yCol = `${this.year}-${this.disease}-death`
+      this.xCol = `${this.year}-${this.disease}-cases`
+      this.updateGraph()
     },
     draw() {
-      this.rows = this.csv.filter(r => +r[this.outCol])
+      this.rows = this.csv
+      const caseMaxes = []
+      const deathMaxes = []
+
+      this.csv.columns.slice(1).forEach((col, idx) => {
+        if (idx % 2) {
+          deathMaxes.push(d3.max(this.rows.map(row => +row[col])))
+        } else {
+          caseMaxes.push(d3.max(this.rows.map(row => +row[col])))
+        }
+      })
 
       const xScale = d3
-        .scaleBand()
-        .domain(this.rows.map(d => d.State))
-        .range([0, 2 * Math.PI])
-        .align(0)
+        .scaleLinear()
+        .domain([0, d3.max(caseMaxes)])
+        .range([50, this.width - 10])
+      this.xScale = xScale
 
       const yScale = d3
         .scaleLinear()
-        .domain([0, d3.max(this.rows.map(d => +d[this.outCol]))])
-        .range([this.innerRadius, this.outerRadius])
+        .domain([0, d3.max(deathMaxes)])
+        .range([this.height - 50, 10])
+      this.yScale = yScale
 
-      const graph = this.svg
+      const points = this.svg
         .selectAll('g')
         .data(this.rows)
         .enter()
         .append('g')
         .attr('id', d => d.State)
-        .attr('transform', `translate(${this.width / 2}, ${this.height * 0.6})`)
 
-      this.drawArcs(graph, this.outCol, xScale, yScale, '#607d8b')
-      this.drawArcs(graph, this.inCol, xScale, yScale, '#f44336')
+      points
+        .append('circle')
+        .attr('class', 'state')
+        .attr('cx', d => xScale(+d[this.xCol]))
+        .attr('cy', d => yScale(+d[this.yCol]))
+        .attr('r', 4)
+        .attr('stroke', '#333333')
+        .attr('stroke-width', 0.5)
+        .attr('fill', 'pink')
 
-      // const angleOffset = -360.0 / this.csv.length / 2.0
-      // const vm = this
+      const xAxis = d3
+        .axisBottom(xScale)
+        .tickSize(-this.height)
+        .tickPadding(5)
 
-      const label = this.svg
+      this.svg
         .append('g')
-        .selectAll('g')
-        .data(this.rows)
-        .enter()
-        .append('g')
-        .attr('text-anchor', 'middle')
-        .attr('transform', d => {
-          const angle =
-            ((xScale(d.State) + xScale.bandwidth() / 2) * 180) / Math.PI
-          const x = this.width / 2
-          const y = this.height * 0.6
-          const xOffset = x
-          const yOffset = y - yScale(d[this.outCol]) - 40
-          return `rotate(${angle},${x},${y})translate(${xOffset},${yOffset})`
-        })
+        .attr('id', 'x-axis')
+        .attr('transform', `translate(0,${this.height - 45})`)
+        .call(xAxis)
+        .attr('stroke-dasharray', '2,2')
+        .select('.domain')
+        .remove()
 
-      label
+      this.svg
+        .select('g#x-axis')
         .append('text')
-        .text(d => d.State)
-        .attr('transform', function(d) {
-          return (xScale(d.State) + xScale.bandwidth() / 2) % (2 * Math.PI) <
-            Math.PI
-            ? 'rotate(-90)translate(0,0)'
-            : 'rotate(90)translate(0,0)'
-        })
-        .style('font-size', 10)
-    },
-    drawArcs(graph, column, x, y, fill) {
-      graph
-        .append('path')
-        .attr('class', 'arc' + column)
+        .attr('x', this.width / 2)
+        .attr('y', 30)
+        .attr('text-anchor', 'middle')
+        .text('Reported Cases')
+        .attr('fill', 'black')
+
+      const yAxis = d3
+        .axisLeft(yScale)
+        .tickSize(-this.width)
+        .tickPadding(5)
+
+      this.svg
+        .append('g')
+        .attr('transform', 'translate(40,0)')
+        .attr('id', 'y-axis')
+        .call(yAxis)
+        .select('.domain')
+        .remove()
+
+      this.svg
+        .select('#y-axis')
+        .append('text')
+        .attr('x', 20)
+        .attr('y', (this.height - 50) / 2)
+        .attr('text-anchor', 'middle')
+        .text('Deaths')
+        .attr('fill', 'black')
         .attr(
-          'd',
-          d3
-            .arc()
-            .innerRadius(this.innerRadius)
-            .outerRadius(d => y(d[column]))
-            .startAngle(d => x(d.State))
-            .endAngle(d => x(d.State) + x.bandwidth())
-            .padAngle(0.1)
-            .padRadius(this.innerRadius)
+          'transform',
+          `rotate(-90, 20, ${(this.height - 50) / 2})translate(0,-50)`
         )
-        .attr('fill', fill)
-        .attr('stroke', 'white')
+      this.drawStateLabels()
+    },
+    drawTrails(year) {
+      const line = d3
+        .line()
+        .x(d => d.x)
+        .y(d => d.y)
+        .curve(d3.curveMonotoneX)
+
+      const vm = this
+      const states = this.csv.filter(row => {
+        const deaths = Object.keys(row)
+          .filter(col => col.indexOf('death') !== -1)
+          .map(col => +row[col])
+        const cases = Object.keys(row)
+          .filter(col => col.indexOf('cases') !== -1)
+          .map(col => +row[col])
+        return d3.max(deaths) > 10 || d3.max(cases) > 1000
+      })
+
+      const color = d3
+        .scaleOrdinal()
+        .domain(states.map(d => d.State))
+        .range(d3.schemeCategory10)
+
+      this.svg
+        .append('g')
+        .attr('id', 'trails')
+        .selectAll('path')
+        .data(states)
+        .enter()
+        .append('path')
+        .transition()
+        .duration(3000)
+        .attr('class', 'trail')
+        .attr('id', d => `${d.State}-trail-${this.year}`)
+        .attr('d', d => {
+          const years = [year - 1, year]
+          const points = years.map(yr => {
+            const xLabel = `${yr}-${vm.disease}-cases`
+            const yLabel = `${yr}-${vm.disease}-death`
+            return {
+              x: vm.xScale(d[xLabel]),
+              y: vm.yScale(d[yLabel])
+            }
+          })
+          return line(points)
+        })
+        .attr('stroke', d => color(d.State))
+        .attr('stroke-width', 2)
+        .attr('fill', 'none')
+        .attr('opacity', 0.3)
+    },
+    drawStateLabels() {
+      const states = this.csv.filter(row => {
+        const deaths = Object.keys(row)
+          .filter(col => col.indexOf('death') !== -1)
+          .map(col => +row[col])
+        const cases = Object.keys(row)
+          .filter(col => col.indexOf('cases') !== -1)
+          .map(col => +row[col])
+        return d3.max(deaths) > 10 || d3.max(cases) > 1000
+      })
+
+      this.svg
+        .append('g')
+        .attr('id', 'state-labels')
+        .selectAll('text')
+        .data(states)
+        .enter()
+        .append('text')
+        .attr('class', 'state-label')
+        .text(d => d.State)
+        .attr('font-size', '9')
+        .attr('fill', 'black')
+        .attr('x', d => this.xScale(+d[this.xCol] + 5))
+        .attr('y', d => this.yScale(+d[this.yCol] + 5))
     }
   }
 }
 </script>
 
-<style scoped></style>
+<style>
+.tick line {
+  stroke-width: 0.5;
+  stroke-opacity: 0.2;
+}
+.tick text {
+  font-size: 9px;
+  fill: #67696e;
+}
+</style>
