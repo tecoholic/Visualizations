@@ -67,7 +67,7 @@
               v-model="disease"
               name="year"
               class="appearance-none bg-gray-200 border border-gray-200 text-gray-700 py-1 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              @change="redraw()"
+              @change="changeDisease()"
             >
               <option value="aes">Acute Encephalitis Syndrome (AES)</option>
               <option value="je">Japanese Encephalitis (JE)</option>
@@ -139,7 +139,8 @@ export default {
       year: 13,
       disease: 'aes',
       xScale: null,
-      yScale: null
+      yScale: null,
+      timer: null
     }
   },
   computed: {
@@ -177,14 +178,23 @@ export default {
     async renderViz() {
       this.csv = await d3.csv('/data/aes-je-2013-18.csv')
       this.draw()
-      setTimeout(this.animate, 1000)
+      this.timer = setTimeout(this.animate, 3000)
     },
     animate() {
       if (this.year < 18) {
         this.year += 1
         this.updateGraph()
-        setTimeout(this.animate, 3000)
+        this.timer = setTimeout(this.animate, 3000)
       }
+    },
+    changeDisease() {
+      this.svg.selectAll('*').remove()
+      this.year = 13
+      this.yCol = `${this.year}-${this.disease}-death`
+      this.xCol = `${this.year}-${this.disease}-cases`
+      this.draw()
+      if (this.timer) clearTimeout(this.timer)
+      this.timer = setTimeout(this.animate, 3000)
     },
     updateGraph() {
       this.yCol = `${this.year}-${this.disease}-death`
@@ -203,6 +213,12 @@ export default {
         .duration(duration)
         .attr('x', d => this.xScale(+d[this.xCol]) + 5)
         .attr('y', d => this.yScale(+d[this.yCol]) + 5)
+
+      this.svg
+        .select('#year-text')
+        .transition()
+        .duration(1000)
+        .text(`20${this.year}`)
 
       const trails = d3.selectAll(`.trail-${this.year}`)
       if (!trails.size() && this.year !== 13) this.animateTrails()
@@ -243,13 +259,16 @@ export default {
       const caseMaxes = []
       const deathMaxes = []
 
-      this.csv.columns.slice(1).forEach((col, idx) => {
-        if (idx % 2) {
-          deathMaxes.push(d3.max(this.rows.map(row => +row[col])))
-        } else {
-          caseMaxes.push(d3.max(this.rows.map(row => +row[col])))
-        }
-      })
+      this.csv.columns
+        .slice(1)
+        .filter(col => col.indexOf(this.disease) !== -1)
+        .forEach((col, idx) => {
+          if (idx % 2) {
+            deathMaxes.push(d3.max(this.rows.map(row => +row[col])))
+          } else {
+            caseMaxes.push(d3.max(this.rows.map(row => +row[col])))
+          }
+        })
 
       const xScale = d3
         .scaleLinear()
@@ -260,9 +279,10 @@ export default {
       const yScale = d3
         .scaleLinear()
         .domain([0, d3.max(deathMaxes)])
-        .range([this.height - 50, 10])
+        .range([this.height - 40, 30])
       this.yScale = yScale
 
+      this.drawHeading()
       const points = this.svg
         .selectAll('g')
         .data(this.rows)
@@ -282,13 +302,13 @@ export default {
 
       const xAxis = d3
         .axisBottom(xScale)
-        .tickSize(-this.height)
+        .tickSize(-(this.height - 60))
         .tickPadding(5)
 
       this.svg
         .append('g')
         .attr('id', 'x-axis')
-        .attr('transform', `translate(0,${this.height - 45})`)
+        .attr('transform', `translate(0,${this.height - 35})`)
         .call(xAxis)
         .attr('stroke-dasharray', '2,2')
         .select('.domain')
@@ -321,14 +341,14 @@ export default {
         .select('#y-axis')
         .append('text')
         .attr('x', 20)
-        .attr('y', (this.height - 50) / 2)
+        .attr('y', (this.height - 40) / 2)
         .attr('text-anchor', 'middle')
         .text('Deaths')
         .attr('fill', 'black')
         .attr('font-size', '12')
         .attr(
           'transform',
-          `rotate(-90, 20, ${(this.height - 50) / 2})translate(0,-50)`
+          `rotate(-90, 20, ${(this.height - 40) / 2})translate(0,-50)`
         )
       this.drawStateLabels()
     },
@@ -405,8 +425,36 @@ export default {
         .text(d => d.State)
         .attr('font-size', '10')
         .attr('fill', 'black')
-        .attr('x', d => this.xScale(+d[this.xCol] + 7))
-        .attr('y', d => this.yScale(+d[this.yCol] + 7))
+        .attr('x', d => this.xScale(+d[this.xCol]) + 7)
+        .attr('y', d => this.yScale(+d[this.yCol]) + 7)
+    },
+    drawHeading() {
+      const headers = this.svg.append('g').attr('id', 'g-headers')
+
+      headers
+        .append('text')
+        .attr('id', 'year-text')
+        .text(`20${this.year}`)
+        .attr('x', 75)
+        .attr('y', 75)
+        .attr('font-size', '48')
+        .attr('opacity', 0.2)
+        .attr('fill', 'red')
+
+      headers
+        .append('text')
+        .attr('id', 'title')
+        .text(() =>
+          this.disease === 'aes'
+            ? 'Acute Encephalitis Syndrome (AES)'
+            : 'Japanese Encephalitis (JE)'
+        )
+        .attr('x', this.width / 2)
+        .attr('y', 15)
+        .attr('font-size', '13')
+        .attr('font-weight', 'bold')
+        .attr('text-anchor', 'middle')
+        .attr('fill', '#333333')
     }
   }
 }
