@@ -189,21 +189,49 @@ export default {
     updateGraph() {
       this.yCol = `${this.year}-${this.disease}-death`
       this.xCol = `${this.year}-${this.disease}-cases`
+      const duration = 3000
       this.svg
         .selectAll('.state')
         .transition()
-        .duration(3000)
+        .duration(duration)
         .attr('cx', d => this.xScale(+d[this.xCol]))
         .attr('cy', d => this.yScale(+d[this.yCol]))
 
       this.svg
         .selectAll('.state-label')
         .transition()
-        .duration(3000)
+        .duration(duration)
         .attr('x', d => this.xScale(+d[this.xCol]) + 5)
         .attr('y', d => this.yScale(+d[this.yCol]) + 5)
 
+      const trails = d3.selectAll(`.trail-${this.year}`)
+      if (!trails.size() && this.year !== 13) this.animateTrails()
+    },
+    animateTrails() {
+      const duration = 3000
       this.drawTrails(this.year)
+      const trails = d3.selectAll(`.trail-${this.year}`)
+
+      trails.each((trail, idx) => {
+        let length = 0
+        try {
+          length = d3
+            .select(`#trail-${this.year}-${idx}`)
+            .node()
+            .getTotalLength()
+        } catch (e) {
+          return
+        }
+
+        d3.select(`#trail-${this.year}-${idx}`)
+          .attr('stroke-dasharray', length + ' ' + length)
+          .attr('stroke-dashoffset', length)
+          .attr('stroke-width', 5)
+          .attr('opacity', 0.3)
+          .transition()
+          .duration(duration)
+          .attr('stroke-dashoffset', 0)
+      })
     },
     redraw() {
       this.yCol = `${this.year}-${this.disease}-death`
@@ -247,9 +275,9 @@ export default {
         .attr('class', 'state')
         .attr('cx', d => xScale(+d[this.xCol]))
         .attr('cy', d => yScale(+d[this.yCol]))
-        .attr('r', 4)
+        .attr('r', 5)
         .attr('stroke', '#333333')
-        .attr('stroke-width', 0.5)
+        .attr('stroke-width', 1)
         .attr('fill', 'pink')
 
       const xAxis = d3
@@ -274,6 +302,7 @@ export default {
         .attr('text-anchor', 'middle')
         .text('Reported Cases')
         .attr('fill', 'black')
+        .attr('font-size', '12')
 
       const yAxis = d3
         .axisLeft(yScale)
@@ -296,6 +325,7 @@ export default {
         .attr('text-anchor', 'middle')
         .text('Deaths')
         .attr('fill', 'black')
+        .attr('font-size', '12')
         .attr(
           'transform',
           `rotate(-90, 20, ${(this.height - 50) / 2})translate(0,-50)`
@@ -332,10 +362,9 @@ export default {
         .data(states)
         .enter()
         .append('path')
-        .transition()
-        .duration(3000)
         .attr('class', 'trail')
-        .attr('id', d => `${d.State}-trail-${this.year}`)
+        .attr('class', `trail-${year}`)
+        .attr('id', (d, i) => `trail-${year}-${i}`)
         .attr('d', d => {
           const years = [year - 1, year]
           const points = years.map(yr => {
@@ -349,9 +378,10 @@ export default {
           return line(points)
         })
         .attr('stroke', d => color(d.State))
-        .attr('stroke-width', 2)
+        .attr('stroke-width', 0)
+        .attr('stroke-linecap', 'round')
         .attr('fill', 'none')
-        .attr('opacity', 0.3)
+        .attr('opacity', 0)
     },
     drawStateLabels() {
       const states = this.csv.filter(row => {
@@ -373,10 +403,10 @@ export default {
         .append('text')
         .attr('class', 'state-label')
         .text(d => d.State)
-        .attr('font-size', '9')
+        .attr('font-size', '10')
         .attr('fill', 'black')
-        .attr('x', d => this.xScale(+d[this.xCol] + 5))
-        .attr('y', d => this.yScale(+d[this.yCol] + 5))
+        .attr('x', d => this.xScale(+d[this.xCol] + 7))
+        .attr('y', d => this.yScale(+d[this.yCol] + 7))
     }
   }
 }
