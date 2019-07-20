@@ -60,6 +60,10 @@ export default {
               link: '/education/dropout/',
             }
             */
+            {
+              title: 'NEET PG 2019',
+              link: '/education/neet-pg-2019/'
+            }
           ]
         },
         {
