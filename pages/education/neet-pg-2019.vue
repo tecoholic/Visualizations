@@ -92,8 +92,7 @@ export default {
   },
   methods: {
     async fetchGerData() {
-      const data = await this.$axios.$get('/data/NEET-PG-2019.csv')
-      this.csv = d3.csvParse(data)
+      this.csv = await d3.csv('/data/NEET-PG-2019.csv')
     },
     renderViz() {
       /* -------------------   Scales and axis  ------------------------ */
