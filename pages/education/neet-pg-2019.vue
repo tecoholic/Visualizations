@@ -2,7 +2,7 @@
   <section class="container">
     <top-nav></top-nav>
     <h2 class="text-lg my-2 font-bold w-full md:w-3/4">
-      NEET PG 2019 Results - State-wise quantity and quality
+      NEET PG 2019 Results - State-wise numbers and pass percentage
     </h2>
     <p class="my-4">
       This graph show the number of candidates who appeared for PG NEET 2019 vs
