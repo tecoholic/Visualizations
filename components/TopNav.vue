@@ -1,6 +1,6 @@
 <template>
   <nav>
-    <div class="py-4 border-b border-gray-200">
+    <div class="py-4 text-sm border-b border-gray-200">
       <a href="/" class="px-4"><font-awesome-icon icon="home" /> Home</a>
       <a href="http://www.arunmozhi.in/blog/" class="px-4">
         <font-awesome-icon icon="blog" /> Blog
@@ -9,9 +9,9 @@
         <font-awesome-icon :icon="['fab', 'twitter']" /> Twitter
       </a>
       <div
-        class="inline font-light tracking-wider mr-4 float-right invisible md:visible"
+        class="inline text-lg font-mono mr-4 float-right invisible md:visible"
       >
-        Tecoholic's Visualizations
+        Arunmozhi's Data Stories
       </div>
     </div>
   </nav>

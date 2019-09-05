@@ -7,7 +7,7 @@
 }
 
 a {
-  @apply text-purple-700 !important;
+  @apply text-gray-700 !important;
 }
 
 @screen sm {
