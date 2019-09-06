@@ -1,8 +1,8 @@
 <template>
   <section class="container">
     <top-nav></top-nav>
-    <h2 class="text-lg my-2 font-bold w-full md:w-3/4">
-      AES & JS Cases and Deaths
+    <h2 class="text-lg my-3 font-bold w-full md:w-3/4">
+      AES & JE Cases and Deaths
     </h2>
     <p class="my-2">
       State wise number of AES/JE Cases and Deaths from 2013-2018
@@ -159,7 +159,7 @@ export default {
         {
           hid: 'og_title',
           name: 'og:title',
-          content: 'AES JS Reports and Deaths 2013-18'
+          content: 'AES JE Reports and Deaths 2013-18'
         },
         {
           hid: 'description',

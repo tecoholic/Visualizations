@@ -1,7 +1,7 @@
 <template>
   <section class="container px-3 md:px-0">
     <top-nav></top-nav>
-    <h2 class="text-lg my-2 font-bold w-full md:w-3/4">
+    <h2 class="text-lg my-3 font-bold w-full md:w-3/4">
       Wealth Inequality Across Caste Groups In India
     </h2>
     <p class="my-2">

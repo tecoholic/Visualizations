@@ -2,7 +2,7 @@
   <section class="container">
     <top-nav></top-nav>
     <div v-for="page in pages" :key="page.title">
-      <div class="md:flex my-4 border border-gray-200">
+      <div class="sm:flex my-4 border border-gray-300">
         <div v-if="page.thumbnail" class="flex-shrink-0 flex justify-center">
           <img :src="page.thumbnail" alt="" />
         </div>
@@ -42,26 +42,26 @@ export default {
           link: '/socio-economic/wealth-index/',
           description:
             'Caste plays a major role in the lives of Indians despite years of affirmative action. This infographic visualizes the data from a study that focused on wealth distribution amongst various groups of people based on their caste groups like FC, BC, SC & ST.',
-          thumbnail: ''
+          thumbnail: '/img/Wealth_Caste_Thumb.png'
         },
         {
-          title: 'AES & JS Cases and Deaths',
+          title: 'AES & JE Cases and Deaths',
           link: '/health/aes-js-deaths/',
           description:
-            'AES & JS are vector borne diseases that affect children across the country. While medicine being very much available and the disease completely treatable, the state of UP and Bihar were in news due to the number of deaths that happened in 2019. This visulization tries to map the number cases vs deaths of various states to see their effectiveness of health care.',
-          thumbnail: ''
+            'AES & JE are vector borne diseases that affect children across the country. While medicine being very much available and the disease completely treatable, the state of UP and Bihar were in news due to the number of deaths that happened in 2019. This visulization tries to map the number cases vs deaths of various states to see their effectiveness of health care.',
+          thumbnail: '/img/AES_JE_Thumb.png'
         }
       ]
     }
   },
   head() {
     return {
-      title: "Tecoholic's Visualizations",
+      title: 'Data Stories from Arunmozhi',
       meta: [
         {
           hid: 'title',
           name: 'title',
-          content: "Tecoholic's Visualizations"
+          content: 'Data Stories from Arunmozhi'
         },
         {
           hid: 'description',
