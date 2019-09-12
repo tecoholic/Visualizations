@@ -6,8 +6,6 @@
     </h2>
     <p class="my-2">
       State wise number of AES/JE Cases and Deaths from 2013-2018.
-      <span class="text-red-500">Red</span> circles indicate Deaths.
-      <span class="text-green-500">Green</span> circles indicate NO deaths
     </p>
     <p
       class="bg-blue-200 border-blue-400 border rounded-sm text-blue-900 md:hidden text-xs p-1 mb-3"
@@ -15,47 +13,8 @@
       <font-awesome-icon icon="info-circle" />
       Zoom in to the visualization if text is too small
     </p>
-    <div class="flex my-3">
-      <div class="w-full md:w-1/2">
-        <div class="inline">
-          <label
-            for="year"
-            class="uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 mx-4"
-          >
-            Year
-          </label>
-          <div class="inline relative w-64">
-            <select
-              id="year"
-              v-model.number="year"
-              name="year"
-              class="w-32 appearance-none bg-gray-200 border border-gray-200 text-gray-700 py-1 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              @change="redraw()"
-            >
-              <option value="13">2013</option>
-              <option value="14">2014</option>
-              <option value="15">2015</option>
-              <option value="16">2016</option>
-              <option value="17">2017</option>
-              <option value="18">2018</option>
-            </select>
-            <div
-              class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
-            >
-              <svg
-                class="fill-current h-4 w-4"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
-                ></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="w-full md:w-1/2">
+    <div class="flex my-4">
+      <div class="w-full m-auto align-middle">
         <div class="inline">
           <label
             for="disease"
@@ -93,7 +52,7 @@
     </div>
 
     <div class="flex flex-wrap my-2">
-      <div id="dia" class="w-full p-4 rounded shadow">
+      <div id="dia" class="w-3/4 sm:w-full md:w-3/4 m-auto p-4 rounded shadow">
         <svg
           ref="viz"
           :viewBox="viewBox"
@@ -133,18 +92,15 @@ export default {
     return {
       csv: [],
       svg: null,
-      width: 840,
-      height: 500,
-      innerRadius: 30,
-      outerRadius: 245,
-      xCol: '13-aes-cases',
-      yCol: '13-aes-death',
+      width: 600,
+      height: 750,
       rows: [],
-      year: 13,
+      year: 2013,
       disease: 'aes',
       xScale: null,
       yScale: null,
-      timer: null
+      colorScale: null,
+      years: [2013, 2014, 2015, 2016, 2017, 2018]
     }
   },
   computed: {
@@ -185,36 +141,7 @@ export default {
     },
     changeDisease() {
       this.svg.selectAll('*').remove()
-      this.year = 13
-      this.yCol = `${this.year}-${this.disease}-death`
-      this.xCol = `${this.year}-${this.disease}-cases`
       this.draw()
-    },
-    updateGraph() {
-      this.yCol = `${this.year}-${this.disease}-death`
-      this.xCol = `${this.year}-${this.disease}-cases`
-      const duration = 3000
-      this.svg
-        .selectAll('.state')
-        .transition()
-        .duration(duration)
-        .attr('cx', d => this.xScale(+d[this.xCol]))
-        .attr('cy', d => this.yScale(d.State))
-        .attr('r', d => 2 + Math.sqrt(+d[this.yCol]))
-        .attr('fill', d =>
-          2 + Math.sqrt(+d[this.yCol]) > 2 ? 'red' : 'lightgreen'
-        )
-
-      this.svg
-        .select('#year-text')
-        .transition()
-        .duration(1000)
-        .text(`20${this.year}`)
-    },
-    redraw() {
-      this.yCol = `${this.year}-${this.disease}-death`
-      this.xCol = `${this.year}-${this.disease}-cases`
-      this.updateGraph()
     },
     draw() {
       this.rows = this.csv
@@ -234,18 +161,23 @@ export default {
         })
 
       const xScale = d3
-        .scaleLinear()
-        .domain([0, d3.max(caseMaxes)])
-        .range([100, this.width - 10])
+        .scalePoint()
+        .domain(this.years)
+        .range([120, this.width - 30])
       this.xScale = xScale
 
       const yScale = d3
         .scalePoint()
         .domain(states)
-        .range([30, this.height - 50])
+        .range([50, this.height - 30])
       this.yScale = yScale
+      this.colorScale = d3.scaleSequential(d3.interpolateRdYlGn).domain([20, 0])
+
+      console.log(this.colorScale(100))
 
       this.drawHeading()
+      this.drawAxes()
+
       const points = this.svg
         .selectAll('g.state')
         .data(this.rows)
@@ -253,73 +185,28 @@ export default {
         .append('g')
         .attr('class', 'state')
         .attr('id', d => d.State)
-
-      const vm = this
-      points
-        .append('circle')
-        .attr('class', 'state')
-        .attr('cx', d => xScale(+d[this.xCol]))
-        .attr('cy', d => yScale(d.State))
-        .attr('r', d => 2 + Math.sqrt(+d[this.yCol]))
-        .attr('stroke', '#333333')
-        .attr('stroke-width', 1)
-        .attr('stroke-opacity', 0.5)
-        .attr('fill', d => (+d[this.yCol] ? 'red' : 'lightgreen'))
-        .on('mouseover', function(d) {
-          const popup = d3
-            .select('div#popup')
-            .html(
-              'Reported <b>Cases:</b> ' +
-                d[vm.xCol] +
-                '<br /><b>Deaths:</b> ' +
-                d[vm.yCol]
-            )
-          popup
-            .style('visibility', 'visible')
-            .style('left', d3.event.pageX - 50 + 'px')
-            .style('top', d3.event.pageY - 90 + 'px')
-          d3.select(this).attr('fill', d =>
-            +d[vm.yCol] ? '#ff9999' : '#e6ffe6'
-          )
-        })
-        .on('mousemove', function(d) {
-          d3.select('div#popup')
-            .style('left', d3.event.pageX - 50 + 'px')
-            .style('top', d3.event.pageY - 90 + 'px')
-        })
-        .on('mouseout', function(d) {
-          d3.select(this).attr('fill', d =>
-            +d[vm.yCol] ? 'red' : 'lightgreen'
-          )
-          d3.select('div#popup').style('visibility', 'hidden')
-        })
-
+      this.years.forEach(year => {
+        this.year = year
+        this.drawCircles(points)
+      })
+    },
+    drawAxes() {
       const xAxis = d3
-        .axisBottom(xScale)
-        .tickSize(-(this.height - 60))
+        .axisTop(this.xScale)
+        .tickSize(0)
         .tickPadding(5)
 
       this.svg
         .append('g')
         .attr('id', 'x-axis')
-        .attr('transform', `translate(0,${this.height - 35})`)
+        .attr('transform', `translate(0,40)`)
         .call(xAxis)
         .attr('stroke-dasharray', '2,2')
         .select('.domain')
         .remove()
 
-      this.svg
-        .select('g#x-axis')
-        .append('text')
-        .attr('x', this.width / 2)
-        .attr('y', 30)
-        .attr('text-anchor', 'middle')
-        .text('Reported Cases')
-        .attr('fill', 'black')
-        .attr('font-size', '12')
-
       const yAxis = d3
-        .axisLeft(yScale)
+        .axisLeft(this.yScale)
         .tickSize(-this.width)
         .tickPadding(5)
 
@@ -331,18 +218,54 @@ export default {
         .select('.domain')
         .remove()
     },
+    drawCircles(points) {
+      const deathsCol = `${this.year - 2000}-${this.disease}-death`
+      const casesCol = `${this.year - 2000}-${this.disease}-cases`
+      points
+        .append('circle')
+        .attr('class', 'state')
+        .attr('cx', d => this.xScale(this.year))
+        .attr('cy', d => this.yScale(d.State))
+        .attr('r', d => {
+          const r = Math.sqrt(+d[casesCol] / 8)
+          return r ? 2 + r : 0
+        })
+        .attr('stroke', '#666666')
+        .attr('stroke-width', 0.5)
+        .attr('fill', d => this.colorScale(+d[deathsCol]))
+        .on('mouseover', function(d) {
+          const popup = d3
+            .select('div#popup')
+            .html(
+              '<b>Cases:</b> ' +
+                d[casesCol] +
+                '<br /><b>Deaths:</b> ' +
+                d[deathsCol]
+            )
+          popup
+            .style('visibility', 'visible')
+            .style('left', d3.event.pageX - 50 + 'px')
+            .style('top', d3.event.pageY - 90 + 'px')
+          d3.select(this)
+            .attr('stroke-width', 1)
+            .attr('stroke', 'black')
+            .attr('opacity', 0.5)
+        })
+        .on('mousemove', function(d) {
+          d3.select('div#popup')
+            .style('left', d3.event.pageX - 50 + 'px')
+            .style('top', d3.event.pageY - 90 + 'px')
+        })
+        .on('mouseout', function(d) {
+          d3.select(this)
+            .attr('opacity', 1)
+            .attr('stroke-width', 0.5)
+            .attr('stroke', '#666666')
+          d3.select('div#popup').style('visibility', 'hidden')
+        })
+    },
     drawHeading() {
       const headers = this.svg.append('g').attr('id', 'g-headers')
-
-      headers
-        .append('text')
-        .attr('id', 'year-text')
-        .text(`20${this.year}`)
-        .attr('x', this.width - 100)
-        .attr('y', 75)
-        .attr('font-size', '32')
-        .attr('opacity', 0.2)
-        .attr('fill', 'red')
 
       headers
         .append('text')
@@ -366,11 +289,11 @@ export default {
 <style>
 .tick line {
   stroke-width: 0.5;
-  stroke-opacity: 0.2;
+  stroke-opacity: 0.1;
 }
 .tick text {
   font-size: 9px;
-  fill: #67696e;
+  fill: #272b35;
 }
 #popup {
   position: absolute;
