@@ -91,6 +91,7 @@
         </div>
       </div>
     </div>
+
     <div class="flex flex-wrap my-2">
       <div id="dia" class="w-full p-4 rounded shadow">
         <svg
@@ -99,6 +100,7 @@
           preserveAspectRatio="xMinYMin meet"
           class="bg-white"
         ></svg>
+        <div id="popup"></div>
       </div>
     </div>
 
@@ -252,6 +254,7 @@ export default {
         .attr('class', 'state')
         .attr('id', d => d.State)
 
+      const vm = this
       points
         .append('circle')
         .attr('class', 'state')
@@ -261,9 +264,35 @@ export default {
         .attr('stroke', '#333333')
         .attr('stroke-width', 1)
         .attr('stroke-opacity', 0.5)
-        .attr('fill', d =>
-          2 + Math.sqrt(+d[this.yCol]) > 2 ? 'red' : 'lightgreen'
-        )
+        .attr('fill', d => (+d[this.yCol] ? 'red' : 'lightgreen'))
+        .on('mouseover', function(d) {
+          const popup = d3
+            .select('div#popup')
+            .html(
+              'Reported <b>Cases:</b> ' +
+                d[vm.xCol] +
+                '<br /><b>Deaths:</b> ' +
+                d[vm.yCol]
+            )
+          popup
+            .style('visibility', 'visible')
+            .style('left', d3.event.pageX - 50 + 'px')
+            .style('top', d3.event.pageY - 90 + 'px')
+          d3.select(this).attr('fill', d =>
+            +d[vm.yCol] ? '#ff9999' : '#e6ffe6'
+          )
+        })
+        .on('mousemove', function(d) {
+          d3.select('div#popup')
+            .style('left', d3.event.pageX - 50 + 'px')
+            .style('top', d3.event.pageY - 90 + 'px')
+        })
+        .on('mouseout', function(d) {
+          d3.select(this).attr('fill', d =>
+            +d[vm.yCol] ? 'red' : 'lightgreen'
+          )
+          d3.select('div#popup').style('visibility', 'hidden')
+        })
 
       const xAxis = d3
         .axisBottom(xScale)
@@ -342,5 +371,17 @@ export default {
 .tick text {
   font-size: 9px;
   fill: #67696e;
+}
+#popup {
+  position: absolute;
+  border-radius: 5%;
+  font-size: 0.8rem;
+  z-index: 5;
+  background-color: white;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  width: 100px;
+  visibility: hidden;
+  background-color: #eee;
 }
 </style>
