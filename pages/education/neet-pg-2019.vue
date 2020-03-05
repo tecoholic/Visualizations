@@ -1,48 +1,40 @@
 <template>
-  <section class="container">
-    <top-nav></top-nav>
-    <h2 class="text-lg my-3 font-bold w-full md:w-3/4">
+  <section class="container section">
+    <h2 class="title">
       NEET PG 2019 Results - State-wise numbers and pass percentage
     </h2>
-    <p class="my-4">
+    <p class="content">
       This graph show the number of candidates who appeared for PG NEET 2019 vs
       the number of candidates qualified. The diagonal lines indicate the pass
-      percentage.
+      percentage. <br />
     </p>
-    <p class="my-2">
+    <p class="content">
       <strong>Source:</strong>
       <a :href="source">
         PRESS RELEASE - National Board of Examinations New Delhi
       </a>
     </p>
-    <p
-      class="bg-blue-200 border-blue-400 border rounded-sm text-blue-900 md:hidden text-xs p-1 mb-3"
-    >
+    <b-notification class="is-hidden-desktop" type="is-info" :closable="false">
       <font-awesome-icon icon="info-circle" />
       Zoom in to the visualization if text is too small
-    </p>
-    <div class="flex flex-wrap my-2">
-      <div id="dia" class="w-full p-4 rounded shadow">
+    </b-notification>
+    <div class="section">
+      <figure class="image">
         <svg
           ref="viz"
           :viewBox="viewBox"
           preserveAspectRatio="xMinYMin meet"
-          class="bg-white"
         ></svg>
-      </div>
+      </figure>
     </div>
   </section>
 </template>
 
 <script>
 import * as d3 from 'd3'
-import TopNav from '../../components/TopNav'
 
 export default {
   name: 'NEETPG2019',
-  components: {
-    TopNav
-  },
   data: function() {
     return {
       source:
@@ -54,6 +46,11 @@ export default {
       bottom: 40,
       left: 50,
       top: 20
+    }
+  },
+  computed: {
+    viewBox: function() {
+      return `0 0 ${this.width} ${this.height}`
     }
   },
   head() {
@@ -79,11 +76,6 @@ export default {
           content: 'summary'
         }
       ]
-    }
-  },
-  computed: {
-    viewBox: function() {
-      return `0 0 ${this.width} ${this.height}`
     }
   },
   mounted() {
