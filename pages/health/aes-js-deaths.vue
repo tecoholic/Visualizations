@@ -1,93 +1,54 @@
 <template>
-  <section class="container">
-    <top-nav></top-nav>
-    <h2 class="text-lg my-3 font-bold w-full md:w-3/4">
+  <section class="container section">
+    <h2 class="title">
       AES & JE Cases and Deaths
     </h2>
-    <p class="my-2">
+    <p class="content">
       State wise number of AES/JE Cases and Deaths from 2013-2018.
     </p>
-    <p
-      class="bg-blue-200 border-blue-400 border rounded-sm text-blue-900 md:hidden text-xs p-1 mb-3"
-    >
-      <font-awesome-icon icon="info-circle" />
-      Zoom in to the visualization if text is too small
+    <p class="content">
+      <strong>Data Source: </strong>
+      <a
+        href="https://www.nvbdcp.gov.in/WriteReadData/l892s/69175758181557490094.pdf"
+      >
+        State wise number of AES/JE Cases and Deaths from 2013-2019(till April)
+      </a>
+      by Directorate of National Vector Borne Disease Control Programme - Delhi
     </p>
-    <div class="flex my-4">
-      <div class="w-full m-auto align-middle">
-        <div class="inline">
-          <label
-            for="disease"
-            class="uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 mx-4"
-          >
-            Disease
-          </label>
-          <div class="inline relative">
-            <select
-              id="disease"
-              v-model="disease"
-              name="year"
-              class="appearance-none bg-gray-200 border border-gray-200 text-gray-700 py-1 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              @change="changeDisease()"
-            >
-              <option value="aes">Acute Encephalitis Syndrome (AES)</option>
-              <option value="je">Japanese Encephalitis (JE)</option>
-            </select>
-            <div
-              class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
-            >
-              <svg
-                class="fill-current h-4 w-4"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
-                ></path>
-              </svg>
-            </div>
-          </div>
-        </div>
+    <div class="columns">
+      <div class="column">
+        <b-field label="Select a Disease" horizontal>
+          <b-select v-model="disease" @change.native="changeDisease()">
+            <option value="aes">Acute Encephalitis Syndrome (AES)</option>
+            <option value="je">Japanese Encephalitis (JE)</option>
+          </b-select>
+        </b-field>
       </div>
     </div>
 
-    <div class="flex flex-wrap my-2">
-      <div id="dia" class="w-3/4 sm:w-full md:w-3/4 m-auto p-4 rounded shadow">
+    <b-notification :closable="false" type="is-info" class="is-hidden-desktop">
+      <font-awesome-icon icon="info-circle" />
+      &nbsp; Zoom in to the visualization if text is too small
+    </b-notification>
+    <div class="columns">
+      <div class="column">
         <svg
           ref="viz"
           :viewBox="viewBox"
           preserveAspectRatio="xMinYMin meet"
           class="bg-white"
         ></svg>
-        <div id="popup"></div>
       </div>
     </div>
-
-    <div class="py-3">
-      <p>
-        <strong>Data Source: </strong>
-        <a
-          href="https://www.nvbdcp.gov.in/WriteReadData/l892s/69175758181557490094.pdf"
-        >
-          State wise number of AES/JE Cases and Deaths from 2013-2019(till
-          April)
-        </a>
-        by Directorate of National Vector Borne Disease Control Programme -
-        Delhi
-      </p>
-    </div>
+    <div id="popup"></div>
   </section>
 </template>
 
 <script>
 import * as d3 from 'd3'
-import TopNav from '../../components/TopNav'
 
 export default {
   name: 'AesJsDeaths',
-  components: {
-    TopNav
-  },
   data: function() {
     return {
       csv: [],
@@ -221,6 +182,10 @@ export default {
     drawCircles(points) {
       const deathsCol = `${this.year - 2000}-${this.disease}-death`
       const casesCol = `${this.year - 2000}-${this.disease}-cases`
+      const containerBox = document
+        .querySelector('.container')
+        .getBoundingClientRect()
+
       points
         .append('circle')
         .attr('class', 'state')
@@ -244,8 +209,8 @@ export default {
             )
           popup
             .style('visibility', 'visible')
-            .style('left', d3.event.pageX - 50 + 'px')
-            .style('top', d3.event.pageY - 90 + 'px')
+            .style('left', d3.event.pageX - containerBox.x - 50 + 'px')
+            .style('top', d3.event.pageY - 140 + 'px')
           d3.select(this)
             .attr('stroke-width', 1)
             .attr('stroke', 'black')
@@ -253,8 +218,8 @@ export default {
         })
         .on('mousemove', function(d) {
           d3.select('div#popup')
-            .style('left', d3.event.pageX - 50 + 'px')
-            .style('top', d3.event.pageY - 90 + 'px')
+            .style('left', d3.event.pageX - containerBox.x - 50 + 'px')
+            .style('top', d3.event.pageY - 140 + 'px')
         })
         .on('mouseout', function(d) {
           d3.select(this)
