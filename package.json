@@ -19,6 +19,8 @@
     "@fortawesome/free-solid-svg-icons": "^5.9.0",
     "@fortawesome/vue-fontawesome": "^0.1.6",
     "@nuxtjs/axios": "^5.3.6",
+    "buefy": "^0.8.12",
+    "bulma": "^0.8.0",
     "cross-env": "^5.2.0",
     "d3": "^5.9.2",
     "nuxt": "^2.4.0"
@@ -40,8 +42,9 @@
     "eslint-plugin-standard": ">=4.0.0",
     "eslint-plugin-vue": "^5.2.2",
     "nodemon": "^1.18.9",
+    "node-sass": "^4.13.1",
     "nuxt-log": "^0.1.0",
     "prettier": "^1.16.4",
-    "tailwindcss": "^1.0.3"
+    "sass-loader": "^8.0.2"
   }
 }

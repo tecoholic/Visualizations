@@ -8,7 +8,8 @@ import {
   faHandHoldingUsd,
   faChalkboardTeacher,
   faChevronRight,
-  faHome
+  faHome,
+  faArrowCircleRight
 } from '@fortawesome/free-solid-svg-icons'
 
 import { faTwitter } from '@fortawesome/free-brands-svg-icons'
@@ -26,7 +27,8 @@ library.add(
   faHome,
   faHandHoldingUsd,
   faBlog,
-  faTwitter
+  faTwitter,
+  faArrowCircleRight
 )
 
 // Register the component globally

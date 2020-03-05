@@ -1,31 +1,22 @@
+/* eslint-disable prettier/prettier */
 <template>
   <section class="container">
-    <top-nav></top-nav>
-    <div v-for="page in pages" :key="page.title">
-      <div class="sm:flex my-4 border border-gray-300">
-        <div v-if="page.thumbnail" class="flex-shrink-0 flex justify-center">
-          <img :src="page.thumbnail" alt="" />
-        </div>
-        <div class="p-4">
-          <h3 class="text-2xl font-bold">
-            <a :href="page.link" class="hover:underline">
-              <span class="text-gray-700">
-                {{ page.title }}
-              </span>
-            </a>
-          </h3>
-          <p class="py-3 text-gray-700">{{ page.description }}</p>
-        </div>
-      </div>
+    <div v-for="page in pages" :key="page.title" class="section">
+      <home-tile
+        :title="page.title"
+        :content="page.description"
+        :image="page.thumbnail"
+        :link="page.link"
+      ></home-tile>
     </div>
   </section>
 </template>
 
 <script>
-import TopNav from '~/components/TopNav.vue'
+import HomeTile from '~/components/HomeTile.vue'
 export default {
   components: {
-    TopNav
+    HomeTile
   },
   data: function() {
     return {

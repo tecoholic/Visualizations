@@ -1,20 +1,25 @@
 <template>
-  <nav>
-    <div class="py-4 text-sm border-b border-gray-500">
-      <a href="/" class="px-4"><font-awesome-icon icon="home" /> Home</a>
-      <a href="http://www.arunmozhi.in/blog/" class="px-4">
-        <font-awesome-icon icon="blog" /> Blog
-      </a>
-      <a href="https://twitter.com/tecoholic" class="px-4">
-        <font-awesome-icon :icon="['fab', 'twitter']" /> Twitter
-      </a>
-      <div
-        class="inline text-lg text-gray-700 font-mono mr-4 float-right invisible md:visible"
-      >
-        Arunmozhi's Data Stories
-      </div>
-    </div>
-  </nav>
+  <b-navbar type="is-light">
+    <template slot="brand">
+      <b-navbar-item tag="router-link" :to="{ path: '/' }">
+        <img
+          src="https://arunmozhiin.files.wordpress.com/2018/11/blogo_256.png"
+          alt="Teco"
+        />
+        <span style="margin-left: 1rem;">
+          Arunmozhi's Data Stories
+        </span>
+      </b-navbar-item>
+    </template>
+    <template slot="start">
+      <b-navbar-item href="https://www.arunmozhi.in/blog/">
+        Blog
+      </b-navbar-item>
+      <b-navbar-item href="https://twitter.com/tecoholic">
+        Twitter
+      </b-navbar-item>
+    </template>
+  </b-navbar>
 </template>
 
 <script>
