@@ -12,11 +12,16 @@
       </b-navbar-item>
     </template>
     <template slot="start">
+      <b-navbar-item href="/">
+        Home
+      </b-navbar-item>
       <b-navbar-item href="https://www.arunmozhi.in/blog/">
         Blog
       </b-navbar-item>
+    </template>
+    <template slot="end">
       <b-navbar-item href="https://twitter.com/tecoholic">
-        Twitter
+        <font-awesome-icon :icon="['fab', 'twitter']" />
       </b-navbar-item>
     </template>
   </b-navbar>
