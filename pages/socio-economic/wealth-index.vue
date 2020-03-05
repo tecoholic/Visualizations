@@ -47,12 +47,7 @@
               {{ col }}
             </th>
           </tr>
-          <tr
-            v-for="(row, index) in csv"
-            :key="index"
-            class="border-b hover:bg-purple-200"
-            :class="{ 'bg-purple-100': index % 2 === 1 }"
-          >
+          <tr v-for="(row, index) in csv" :key="index">
             <td v-for="col in csv.columns" :key="'r' + index + col">
               {{ row[col] }}
             </td>
