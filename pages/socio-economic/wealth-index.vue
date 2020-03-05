@@ -1,31 +1,38 @@
 <template>
-  <section class="container px-3 md:px-0">
-    <top-nav></top-nav>
-    <h2 class="text-lg my-3 font-bold w-full md:w-3/4">
+  <section class="container section">
+    <h2 class="title">
       Wealth Inequality Across Caste Groups In India
     </h2>
-    <p class="my-2">
+    <p class="content">
       This Visualization shows the distribution of communities across the wealth
       spectrum.
     </p>
-    <p
-      class="bg-blue-200 border-blue-400 border rounded-sm text-blue-900 md:hidden text-xs p-1 mb-3"
-    >
+
+    <p class="content">
+      <strong>Data Source: </strong>
+      <a
+        href="https://wid.world/document/n-k-bharti-wealth-inequality-class-and-caste-in-india-1961-2012/"
+      >
+        World Inequality Database - Wealth Inequality, Class and Caste in India,
+        1961-2012 by <em>Nitin Kumar Bharti</em>
+      </a>
+    </p>
+
+    <b-notification type="is-info" :closable="false" class="is-hidden-desktop">
       <font-awesome-icon icon="info-circle" />
       Zoom in to the visualization if text is too small
-    </p>
-    <div class="flex my-3">
-      <div class="w-full">
-        <button
-          class="text-xs py-1 px-2 border border-green-700 rounded bg-green-600 text-white shadow cursor-pointer"
-          @click="changeChartType()"
-        >
+    </b-notification>
+
+    <div class="columns">
+      <div class="column">
+        <b-button type="is-primary" @click="changeChartType()">
           Switch to {{ chartType }}
-        </button>
+        </b-button>
       </div>
     </div>
-    <div class="flex flex-wrap">
-      <div id="dia" class="w-full md:w-2/3 p-4 rounded shadow">
+
+    <div class="columns">
+      <div class="column is-two-thirds">
         <svg
           ref="viz"
           :viewBox="viewBox"
@@ -33,10 +40,10 @@
           class="bg-white"
         ></svg>
       </div>
-      <div class="w-full md:w-1/3">
-        <table class="text-sm border mx-auto">
-          <tr v-if="csv.columns" class="border-b-2">
-            <th v-for="col in csv.columns" :key="col" class="px-1 py-2">
+      <div class="column is-one-third">
+        <table class="table">
+          <tr v-if="csv.columns">
+            <th v-for="col in csv.columns" :key="col">
               {{ col }}
             </th>
           </tr>
@@ -46,41 +53,21 @@
             class="border-b hover:bg-purple-200"
             :class="{ 'bg-purple-100': index % 2 === 1 }"
           >
-            <td
-              v-for="col in csv.columns"
-              :key="'r' + index + col"
-              class="px-1 py-2 text-center"
-            >
+            <td v-for="col in csv.columns" :key="'r' + index + col">
               {{ row[col] }}
             </td>
           </tr>
         </table>
       </div>
     </div>
-
-    <div class="py-3">
-      <p>
-        <strong>Data Source: </strong>
-        <a
-          href="https://wid.world/document/n-k-bharti-wealth-inequality-class-and-caste-in-india-1961-2012/"
-        >
-          World Inequality Database - Wealth Inequality, Class and Caste in
-          India, 1961-2012 by <em>Nitin Kumar Bharti</em>
-        </a>
-      </p>
-    </div>
   </section>
 </template>
 
 <script>
 import * as d3 from 'd3'
-import TopNav from '../../components/TopNav'
 
 export default {
   name: 'WealthIndex',
-  components: {
-    TopNav
-  },
   data: function() {
     return {
       csv: [],
