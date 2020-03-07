@@ -52,9 +52,32 @@ export default {
       states: []
     }
   },
+  head() {
+    return {
+      title: 'Gross Enrollement Ratio (GER) across states',
+      meta: [
+        {
+          hid: 'og_title',
+          name: 'og:title',
+          content: 'Gross Enrollement Ratio (GER) across states'
+        },
+        {
+          hid: 'description',
+          name: 'description',
+          content:
+            'Gross enrolment ratio (GER): Total enrolment in a specific level of education, regardless of age, expressed as a percentage of the eligible official school-age population corresponding to the same level of education in a given school-year . This visualization shows the GER of all the states in India across different school levels. It helps in identifying the dropout rates when transistioning from one school level to another.',
+        },
+        {
+          hid: 'twitter_card',
+          name: 'twitter:card',
+          content: 'summary'
+        }
+      ]
+    }
+  },
   computed: {
     height: function() {
-      return this.states.length * 25 + 50
+      return this.states.length * 25 + 20
     }
   },
   mounted() {
@@ -117,6 +140,11 @@ export default {
         .domain(this.xColumns)
         .range([320, this.width - 50])
 
+      const yPos = d3
+        .scaleLinear()
+        .domain([20, 160])
+        .range([this.height - 20, 25])
+
       const colors = d3
         .scalePoint()
         .domain(this.states)
@@ -150,7 +178,7 @@ export default {
       }
 
       // curve definition
-      const connector = d3.line().curve(d3.curveCardinal.tension(0.8))
+      const connector = d3.line().curve(d3.curveCardinal.tension(1))
 
       // draw the connectors
       this.svg
@@ -163,9 +191,9 @@ export default {
         .attr('d', d => {
           const points = this.xColumns.map((col, i) => [
             xPos(col),
-            curvePoints[d.State_UT][i] * 25 + 38
+            yPos(d[col])
           ])
-          points.splice(0, 0, [150, points[0][1]])
+          points.splice(0, 0, [155, this.states.indexOf(d.State_UT) * 25 + 38])
 
           return connector(points)
         })
@@ -185,14 +213,15 @@ export default {
         .attr('d', d => {
           const points = this.xColumns.map((col, i) => [
             xPos(col),
-            curvePoints[d.State_UT][i] * 25 + 38
+            yPos(d[col])
           ])
-          points.splice(0, 0, [150, points[0][1]])
+          points.splice(0, 0, [153, this.states.indexOf(d.State_UT) * 25 + 38])
 
           return connector(points)
         })
         .attr('stroke', d => d3.interpolateSpectral(colors(d.State_UT)))
         .attr('stroke-width', 10)
+        .attr('stroke-linecap', 'round')
         .attr('opacity', 0)
         .attr('fill', 'none')
 
@@ -211,31 +240,52 @@ export default {
       for (let i = 0; i < this.xColumns.length; i++) {
         const col = this.xColumns[i]
         this.csv.sort((a, b) => parseFloat(b[col]) - parseFloat(a[col]))
+        const min = Math.floor(
+          d3.min(this.csv.map(r => parseFloat(r[col]))) / 10
+        )
+        const max = Math.ceil(
+          d3.max(this.csv.map(r => parseFloat(r[col]))) / 10
+        )
+        const levels = []
+        for (let i = min; i <= max; i++) {
+          levels.push(Math.floor(i) * 10)
+        }
 
         const g = this.svg.append('g').attr('id', col + '_labels')
         const g2 = this.svg.append('g').attr('id', col + '_boxes')
 
         g.selectAll('text')
-          .data(this.csv)
+          .data(levels)
           .enter()
           .append('text')
           .attr('x', xPos(col) + 8)
-          .attr('y', (d, i) => i * 25 + 34)
-          .text(d => Math.round(d[col]))
+          .attr('y', d => yPos(d))
+          .text(d => d)
           .attr('font-size', '11px')
           .attr('font-family', 'sans-serif')
           .attr('alignment-baseline', 'hanging')
-          .attr('opacity', 0.8)
+
+        // Add a line at the end to terminate the connectors
+        this.svg
+          .append('g')
+          .attr('id', 'endline')
+          .append('line')
+          .attr('x1', xPos(col) + 2)
+          .attr('x2', xPos(col) + 2)
+          .attr('y1', yPos(min * 10))
+          .attr('y2', yPos(max * 10))
+          .attr('stroke', 'lightgrey')
 
         g2.selectAll('rect')
-          .data(this.csv)
+          .data(levels)
           .enter()
           .append('rect')
           .attr('x', xPos(col))
-          .attr('y', (d, i) => i * 25 + 30)
-          .attr('height', '15px')
+          .attr('y', d => yPos(d) + 2)
+          // .attr('y', (d, i) => i * 25 + 30)
+          .attr('height', '5px')
           .attr('width', '5px')
-          .attr('fill', d => d3.interpolateSpectral(colors(d.State_UT)))
+          .attr('fill', 'grey')
       }
     }
   }
