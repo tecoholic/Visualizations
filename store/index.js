@@ -1,6 +1,13 @@
 export const state = () => ({
   homeTiles: [
     {
+      title: 'Gross Enrollement Ratio (GER) across states',
+      link: '/education/ger/',
+      description:
+        'Gross enrolment ratio (GER): Total enrolment in a specific level of education, regardless of age, expressed as a percentage of the eligible official school-age population corresponding to the same level of education in a given school-year . This visualization shows the GER of all the states in India across different school levels. It helps in identifying the dropout rates when transistioning from one school level to another.',
+      thumbnail: '/img/GER_Thumb.jpg'
+    },
+    {
       title: 'NEET PG 2019',
       link: '/education/neet-pg-2019/',
       description:
