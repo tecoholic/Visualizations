@@ -63,8 +63,7 @@ export default {
   },
   methods: {
     async fetchGerData() {
-      const data = await this.$axios.$get('/data/GER_1.csv')
-      this.csv = d3.csvParse(data)
+      this.csv = await d3.csv('/data/GER_1.csv')
       this.states = this.csv.map(row => row.State_UT)
       this.renderLabels()
       this.draw()
