@@ -23,7 +23,8 @@
 
     <b-notification :closable="false">
       <font-awesome-icon icon="info-circle" />
-      Hovering over the lines will highlight a particular state
+      Hovering over the lines will highlight a particular state. Clicking on the
+      lines will keep them highlighted - useful for comparing states.
     </b-notification>
 
     <div id="dia">
@@ -49,7 +50,8 @@ export default {
         'Secondary_Total',
         'Higher_Secondary_Total'
       ],
-      states: []
+      states: [],
+      clicked: []
     }
   },
   head() {
@@ -65,7 +67,7 @@ export default {
           hid: 'description',
           name: 'description',
           content:
-            'Gross enrolment ratio (GER): Total enrolment in a specific level of education, regardless of age, expressed as a percentage of the eligible official school-age population corresponding to the same level of education in a given school-year . This visualization shows the GER of all the states in India across different school levels. It helps in identifying the dropout rates when transistioning from one school level to another.',
+            'Gross enrolment ratio (GER): Total enrolment in a specific level of education, regardless of age, expressed as a percentage of the eligible official school-age population corresponding to the same level of education in a given school-year . This visualization shows the GER of all the states in India across different school levels. It helps in identifying the dropout rates when transistioning from one school level to another.'
         },
         {
           hid: 'twitter_card',
@@ -77,7 +79,7 @@ export default {
   },
   computed: {
     height: function() {
-      return this.states.length * 25 + 20
+      return this.states.length * 25 + 40
     }
   },
   mounted() {
@@ -130,8 +132,31 @@ export default {
         .attr('width', '5px')
         .attr('fill', d => d3.interpolateSpectral(colors(d.State_UT)))
     },
+    drawTitle(xPosFn, yPos) {
+      // Draw the titles
+      this.svg
+        .append('g')
+        .attr('id', 'titles')
+        .selectAll('text')
+        .data(this.xColumns)
+        .enter()
+        .append('text')
+        .attr('x', d => xPosFn(d))
+        .attr('y', yPos)
+        .text(d => {
+          const t = d.split('_')
+          t.splice(-1, 1)
+          return t.join(' ')
+        })
+        .attr('font-size', '11px')
+        .attr('font-family', 'sans-serif')
+        .attr('font-weight', 'bold')
+        .attr('text-anchor', 'middle')
+        .attr('alignment-baseline', 'hanging')
+    },
     draw() {
       const curvePoints = {}
+      const vm = this
       for (let i = 0; i < this.states.length; i++) {
         curvePoints[this.states[i]] = []
       }
@@ -143,33 +168,16 @@ export default {
       const yPos = d3
         .scaleLinear()
         .domain([20, 160])
-        .range([this.height - 20, 25])
+        .range([this.height - 30, 25])
 
       const colors = d3
         .scalePoint()
         .domain(this.states)
         .range([0, 1])
 
-      // Draw the titles
-
-      this.svg
-        .append('g')
-        .attr('id', 'titles')
-        .selectAll('text')
-        .data(this.xColumns)
-        .enter()
-        .append('text')
-        .attr('x', d => xPos(d))
-        .attr('y', 5)
-        .text(d => {
-          const t = d.split('_')
-          t.splice(-1, 1)
-          return t.join(' ')
-        })
-        .attr('font-size', '11px')
-        .attr('font-family', 'sans-serif')
-        .attr('text-anchor', 'middle')
-        .attr('alignment-baseline', 'hanging')
+      // draw the titles
+      this.drawTitle(xPos, 5)
+      this.drawTitle(xPos, this.height - 15)
 
       for (let i = 0; i < this.xColumns.length; i++) {
         const col = this.xColumns[i]
@@ -198,7 +206,7 @@ export default {
           return connector(points)
         })
         .attr('stroke', 'black')
-        .attr('stroke-width', 2)
+        .attr('stroke-width', 1)
         .attr('opacity', 0.1)
         .attr('fill', 'none')
 
@@ -224,16 +232,32 @@ export default {
         .attr('stroke-linecap', 'round')
         .attr('opacity', 0)
         .attr('fill', 'none')
-
         .on('mouseover', function(d, i) {
           d3.select(this)
             .attr('stroke-width', 6)
             .attr('opacity', 1)
         })
         .on('mouseout', function(d, i) {
-          d3.select(this)
-            .attr('stroke-width', 10)
-            .attr('opacity', 0)
+          if (vm.clicked.indexOf(d.State_UT) === -1) {
+            d3.select(this)
+              .attr('stroke-width', 10)
+              .attr('opacity', 0)
+          }
+        })
+        .on('click', function(d, i) {
+          // already clicked
+          if (vm.clicked.indexOf(d.State_UT) !== -1) {
+            d3.select(this)
+              .attr('stroke-width', 10)
+              .attr('opacity', 0)
+            vm.clicked = vm.clicked.filter(s => s !== d.State_UT)
+          } else {
+            // clicking now
+            d3.select(this)
+              .attr('stroke-width', 6)
+              .attr('opacity', 1)
+            vm.clicked.push(d.State_UT)
+          }
         })
 
       // Draw the labels and blocks in the descending order
