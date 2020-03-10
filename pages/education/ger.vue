@@ -28,16 +28,27 @@
     </b-notification>
 
     <div id="dia">
-      <svg ref="viz" :width="width" :height="height"></svg>
+      <svg id="viz" ref="viz" :width="width" :height="height"></svg>
+      <download-as-image
+        class="is-pulled-right"
+        selector="#viz"
+        title="Gross Enrollment Ratio Across States of India"
+        source="U-DISE Data from data.gov.in - 2015-16"
+      >
+      </download-as-image>
     </div>
   </section>
 </template>
 
 <script>
 import * as d3 from 'd3'
+import DownloadAsImage from '~/components/DownloadAsImage'
 
 export default {
   name: 'GER',
+  components: {
+    DownloadAsImage
+  },
   data: function() {
     return {
       circles: [{ x: 70, y: 50, r: 30 }, { x: 170, y: 100, r: 50 }],

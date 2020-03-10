@@ -3,7 +3,8 @@ import { library, config } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
   faInfoCircle,
-  faArrowCircleRight
+  faArrowCircleRight,
+  faDownload
 } from '@fortawesome/free-solid-svg-icons'
 
 import { faTwitter } from '@fortawesome/free-brands-svg-icons'
@@ -13,7 +14,7 @@ config.autoAddCss = false
 
 // You can add your icons directly in this plugin. See other examples for how you
 // can add other styles or just individual icons.
-library.add(faInfoCircle, faTwitter, faArrowCircleRight)
+library.add(faInfoCircle, faTwitter, faArrowCircleRight, faDownload)
 
 // Register the component globally
 Vue.component('font-awesome-icon', FontAwesomeIcon)
