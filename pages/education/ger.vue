@@ -62,7 +62,8 @@ export default {
         'Higher_Secondary_Total'
       ],
       states: [],
-      clicked: []
+      clicked: [],
+      colorCounter: 0
     }
   },
   head() {
@@ -258,10 +259,11 @@ export default {
           } else {
             // clicking now
             d3.select(this)
-              .attr('stroke', colors(vm.clicked.length))
+              .attr('stroke', colors(vm.colorCounter))
               .attr('stroke-width', 5)
               .attr('opacity', 1)
             vm.clicked.push(d.State_UT)
+            vm.colorCounter++
           }
         })
 
