@@ -125,11 +125,6 @@ export default {
         .attr('text-anchor', 'end')
         .attr('alignment-baseline', 'hanging')
 
-      const colors = d3
-        .scalePoint()
-        .domain(this.csv.map(d => d.State_UT))
-        .range([0, 1])
-
       this.states = this.csv.map(d => d.State_UT)
 
       labels
@@ -141,13 +136,13 @@ export default {
         .attr('y', (d, i) => i * 25 + 30)
         .attr('height', '15px')
         .attr('width', '5px')
-        .attr('fill', d => d3.interpolateSpectral(colors(d.State_UT)))
+        .attr('fill', 'darkgrey')
     },
-    drawTitle(xPosFn, yPos) {
+    drawTitle(xPosFn, yPos, id) {
       // Draw the titles
       this.svg
         .append('g')
-        .attr('id', 'titles')
+        .attr('id', id)
         .selectAll('text')
         .data(this.xColumns)
         .enter()
@@ -181,14 +176,11 @@ export default {
         .domain([20, 160])
         .range([this.height - 30, 25])
 
-      const colors = d3
-        .scalePoint()
-        .domain(this.states)
-        .range([0, 1])
+      const colors = d3.scaleOrdinal(d3.schemeCategory10)
 
       // draw the titles
-      this.drawTitle(xPos, 5)
-      this.drawTitle(xPos, this.height - 15)
+      this.drawTitle(xPos, 5, 'top_labels')
+      this.drawTitle(xPos, this.height - 15, 'bottom_labels')
 
       for (let i = 0; i < this.xColumns.length; i++) {
         const col = this.xColumns[i]
@@ -238,14 +230,14 @@ export default {
 
           return connector(points)
         })
-        .attr('stroke', d => d3.interpolateSpectral(colors(d.State_UT)))
+        .attr('stroke', 'darkgrey')
         .attr('stroke-width', 10)
         .attr('stroke-linecap', 'round')
         .attr('opacity', 0)
         .attr('fill', 'none')
         .on('mouseover', function(d, i) {
           d3.select(this)
-            .attr('stroke-width', 6)
+            .attr('stroke-width', 5)
             .attr('opacity', 1)
         })
         .on('mouseout', function(d, i) {
@@ -259,13 +251,15 @@ export default {
           // already clicked
           if (vm.clicked.indexOf(d.State_UT) !== -1) {
             d3.select(this)
+              .attr('stroke', 'darkgrey')
               .attr('stroke-width', 10)
               .attr('opacity', 0)
             vm.clicked = vm.clicked.filter(s => s !== d.State_UT)
           } else {
             // clicking now
             d3.select(this)
-              .attr('stroke-width', 6)
+              .attr('stroke', colors(vm.clicked.length))
+              .attr('stroke-width', 5)
               .attr('opacity', 1)
             vm.clicked.push(d.State_UT)
           }
