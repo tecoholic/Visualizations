@@ -1,7 +1,7 @@
 <template>
   <b-navbar type="is-light">
     <template slot="brand">
-      <b-navbar-item tag="router-link" :to="{ path: '/' }">
+      <b-navbar-item :to="{ path: '/' }" tag="router-link">
         <img
           src="https://arunmozhiin.files.wordpress.com/2018/11/blogo_256.png"
           alt="Teco"

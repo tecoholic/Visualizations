@@ -51,7 +51,6 @@ export default {
   },
   data: function() {
     return {
-      circles: [{ x: 70, y: 50, r: 30 }, { x: 170, y: 100, r: 50 }],
       csv: [],
       svg: null,
       width: 900,

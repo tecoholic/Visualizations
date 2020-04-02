@@ -14,7 +14,7 @@
         PRESS RELEASE - National Board of Examinations New Delhi
       </a>
     </p>
-    <b-notification class="is-hidden-desktop" type="is-info" :closable="false">
+    <b-notification :closable="false" class="is-hidden-desktop" type="is-info">
       <font-awesome-icon icon="info-circle" />
       Zoom in to the visualization if text is too small
     </b-notification>

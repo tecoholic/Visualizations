@@ -1,5 +1,5 @@
 <template>
-  <b-button id="download" type="is-light" @click="download()">
+  <b-button id="download" @click="download()" type="is-light">
     <font-awesome-icon icon="download" /> Download as Image
   </b-button>
 </template>

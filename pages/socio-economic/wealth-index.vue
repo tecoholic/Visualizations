@@ -18,14 +18,14 @@
       </a>
     </p>
 
-    <b-notification type="is-info" :closable="false" class="is-hidden-desktop">
+    <b-notification :closable="false" type="is-info" class="is-hidden-desktop">
       <font-awesome-icon icon="info-circle" />
       Zoom in to the visualization if text is too small
     </b-notification>
 
     <div class="columns">
       <div class="column">
-        <b-button type="is-primary" @click="changeChartType()">
+        <b-button @click="changeChartType()" type="is-primary">
           Switch to {{ chartType }}
         </b-button>
       </div>
